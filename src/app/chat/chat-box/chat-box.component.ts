@@ -77,7 +77,7 @@ export class ChatBoxComponent implements OnInit,AfterViewInit {
       this.userSelectedToChat(this.receiverId,this.receiverName)
     }
 
-    this.checkStatus();
+    //this.checkStatus();
 
    
 

@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { RemoveSpecialCharPipe } from '../shared/pipe/remove-special-char.pipe';
 import { SocketService } from '../socket.service';
+import { ChatRouterGuardService } from '../RouteGuard/chat-router-guard.service';
 
 
 
@@ -15,9 +16,9 @@ import { SocketService } from '../socket.service';
     CommonModule,
     SharedModule,
     RouterModule.forChild([
-      {path:'chat',component:ChatBoxComponent}
+      {path:'chat',component:ChatBoxComponent,canActivate:[ChatRouterGuardService]}
     ])
   ],
-  providers : [SocketService]
+  providers : [SocketService,ChatRouterGuardService]
 })
 export class ChatModule { }
