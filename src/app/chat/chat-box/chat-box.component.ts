@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import { Cookie } from 'ng2-cookies/ng2-cookies';
 import { ToastrManager, ToastrModule } from 'ng6-toastr-notifications';
 
+//interface
+
+import {ChatMessage} from '../../interfaces/ChatMessage.interface';
 @Component({
   
   selector: 'app-chat-box',
@@ -12,7 +15,7 @@ import { ToastrManager, ToastrModule } from 'ng6-toastr-notifications';
   styleUrls: ['./chat-box.component.css'],
   providers: []
 })
-export class ChatBoxComponent implements OnInit {
+export class ChatBoxComponent implements OnInit,AfterViewInit {
 
   
 
@@ -47,12 +50,19 @@ export class ChatBoxComponent implements OnInit {
     //this.scrollMe.nativeElement.scrollTop = this.scrollMe.nativeElement.scrollHeight;
 
   }
+  ngAfterViewInit(): void {
+    console.log('in view init');
+    this.verifyUserConfirmation();
+    this.getOnlineUserList();
+
+    this.getMessageFromAUser();
+  }
  
 
 
   ngOnInit() {
 
-    console.log('on ng init');
+    console.log('inn ng oninit');
 
     this.authToken = Cookie.get('authtoken');
 
@@ -69,10 +79,7 @@ export class ChatBoxComponent implements OnInit {
 
     this.checkStatus();
 
-    this.verifyUserConfirmation();
-    this.getOnlineUserList();
-
-    this.getMessageFromAUser();
+   
 
    // this.scrollToChatTop=false;
   }
@@ -81,6 +88,7 @@ export class ChatBoxComponent implements OnInit {
 
 
 public checkStatus(){
+  console.log('in checkstatus')
   if (Cookie.get('authtoken') === undefined || Cookie.get('authtoken') === '' || Cookie.get('authtoken') === null) {
 
     this.router.navigate(['/']);
@@ -90,7 +98,7 @@ public checkStatus(){
 
 
 public verifyUserConfirmation(){
-
+  console.log('n verify user');
   this.SocketService.verifyUser()
     .subscribe((data) => {
 
@@ -102,6 +110,7 @@ public verifyUserConfirmation(){
   }
   
   public getOnlineUserList(){
+    console.log('getting online usersl liist');
     // let unReadMessages = [];
     // this.SocketService.getUnreadMessages(this.userInfo.userId).subscribe(
     //   (Response)=>{
@@ -137,6 +146,7 @@ public verifyUserConfirmation(){
 
 
   public getPreviousChatWithAUser(){
+    console.log('get previous chat');
     let previousData = (this.messageList.length > 0 ? this.messageList.slice() : []);
     
     this.SocketService.getChat(this.userInfo.userId, this.receiverId, this.pageValue * 10)
@@ -170,7 +180,7 @@ public verifyUserConfirmation(){
 
 
   public loadEarlierPageOfChat(){
-
+    console.log('load earlier chat on demand');
     this.loadingPreviousChat = true;
 
     this.pageValue++;
@@ -181,7 +191,7 @@ public verifyUserConfirmation(){
   } 
 
   public userSelectedToChat(id,name){
-
+    console.log('inside user selected')
     this.scrollToChatTop=false;
       
     this.userList.map((user)=>{
@@ -219,10 +229,10 @@ public verifyUserConfirmation(){
   } 
 
   public sendMessage(){
-
+    console.log('inside send message')
     if(this.messageText){
 
-      let chatMsgObject = {
+      let chatMsgObject:ChatMessage = {
         senderName: this.userInfo.firstName + " " + this.userInfo.lastName,
         senderId: this.userInfo.userId,
         receiverName: Cookie.get('receiverName'),
@@ -241,7 +251,7 @@ public verifyUserConfirmation(){
   }
 
   public pushToChatWindow : any =(data)=>{
-
+    console.log('push to chat window')
     this.messageText="";
     this.messageList.push(data);
     this.scrollToChatTop = false;
@@ -250,9 +260,9 @@ public verifyUserConfirmation(){
   }
 
   public getMessageFromAUser(){
-
+    console.log('get message from user');
       this.SocketService.chatByUserId(this.userInfo.userId)
-      .subscribe((data)=>{
+      .subscribe((data:ChatMessage)=>{
        
 
         (this.receiverId==data.senderId)?this.messageList.push(data):'';
@@ -267,7 +277,7 @@ public verifyUserConfirmation(){
 
 
   public logout(){
-
+    console.log('inside logout');
     this.AppService.logout()
       .subscribe((apiResponse) => {
 
@@ -298,7 +308,7 @@ public verifyUserConfirmation(){
 
   
   public showUserName(name:string){
-
+    console.log('inside show username');
     this.toastr.successToastr("You are chatting with "+name)
 
   }
